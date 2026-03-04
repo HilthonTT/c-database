@@ -1,13 +1,27 @@
 CC = gcc
-CFLAGS = -g
+CFLAGS = -g -Wall -I./src
 RM = rm -f
 
-default: all
+SRC_DIR = src
+BUILD_DIR = build
 
-all: main
+SOURCES = $(wildcard $(SRC_DIR)/*.c)
+OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
 
-main: main.c
-		$(CC) $(CFLAGS) -o main main.c
+TARGET = db
 
-clean veryclean:
-	$(RM) main
+all: $(TARGET)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR):
+	mkdir -p $@
+
+clean:
+	$(RM) -r $(BUILD_DIR) $(TARGET)
+
+.PHONY: all clean
