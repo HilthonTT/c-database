@@ -22,6 +22,12 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 clean:
-	$(RM) -r $(BUILD_DIR) $(TARGET)
+	$(RM) -r $(BUILD_DIR) $(TARGET) *.db
+
+test:
+	bundle exec rspec
+
+format: *.c
+	clang-format -style=Google -i *.c
 
 .PHONY: all clean
