@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #define PAGE_SIZE 4096
 #define TABLE_MAX_PAGES 100
@@ -31,8 +32,17 @@ typedef struct {
     uint32_t num_rows;
 } Table;
 
+typedef struct {
+    Table* table;
+    uint32_t row_num;
+    bool end_of_table; // Indicates a position one past the last element
+} Cursor;
+
+Cursor* table_start(Table* table);
+Cursor* table_end(Table* table);
+void cursor_advance(Cursor* cursor);
 Table* db_open(const char *filename);
-void* row_slot(Table* table, uint32_t row_num);
+void* cursor_value(Cursor* cursor);
 void* get_page(Pager* pager, uint32_t page_num);
 Pager* pager_open(const char* filename);
 void db_close(Table *table);
