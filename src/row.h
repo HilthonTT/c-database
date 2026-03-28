@@ -18,12 +18,13 @@ void print_row(Row *row);
 void serialize_row(Row *source, void *destination);
 void deserialize_row(void *source, Row *destination);
 
-extern const uint32_t ID_SIZE;
-extern const uint32_t USERNAME_SIZE;
-extern const uint32_t EMAIL_SIZE;
-extern const uint32_t ID_OFFSET;
-extern const uint32_t USERNAME_OFFSET;
-extern const uint32_t EMAIL_OFFSET;
-extern const uint32_t ROW_SIZE;
+#define ID_SIZE        size_of_attribute(Row, id)
+#define USERNAME_SIZE  size_of_attribute(Row, username)
+#define EMAIL_SIZE     size_of_attribute(Row, email)
+#define ROW_SIZE       (ID_SIZE + USERNAME_SIZE + EMAIL_SIZE)
+
+#define ID_OFFSET        0
+#define USERNAME_OFFSET  (ID_OFFSET + ID_SIZE)
+#define EMAIL_OFFSET     (USERNAME_OFFSET + USERNAME_SIZE)
 
 #endif
