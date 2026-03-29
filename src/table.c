@@ -185,6 +185,7 @@ Cursor* table_end(Table* table) {
 
     void* root_node = get_page(table->pager, table->root_page_num);
     uint32_t num_cells = *leaf_node_num_cells(root_node);
+    cursor->cell_num = num_cells;
 
     cursor->end_of_table = true;
 

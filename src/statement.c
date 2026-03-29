@@ -53,7 +53,6 @@ ExecuteResult execute_insert(Statement *statement, Table *table) {
     Row *row_to_insert = &(statement->row_to_insert);
     Cursor* cursor = table_end(table);
 
-    serialize_row(row_to_insert, cursor_value(cursor));
     leaf_node_insert(cursor, row_to_insert->id, row_to_insert);
 
     free(cursor);
