@@ -40,8 +40,14 @@ extern const uint32_t LEAF_NODE_SPACE_FOR_CELLS;
 extern const uint32_t LEAF_NODE_MAX_CELLS;
 
 typedef enum {
+    NODE_INTERNAL,
+    NODE_LEAF,
+} NodeType;
+
+typedef enum {
     EXECUTE_SUCCESS,
     EXECUTE_TABLE_FULL,
+    EXECUTE_DUPLICATE_KEY,
 } ExecuteResult;
 
 typedef struct {
@@ -64,7 +70,8 @@ typedef struct {
 } Cursor;
 
 Cursor* table_start(Table* table);
-Cursor* table_end(Table* table);
+Cursor* table_find(Table* table, uint32_t key);
+Cursor* leaf_node_find(Table* table, uint32_t page_num, uint32_t key);
 void cursor_advance(Cursor* cursor);
 Table* db_open(const char *filename);
 void* cursor_value(Cursor* cursor);
@@ -72,6 +79,8 @@ void* get_page(Pager* pager, uint32_t page_num);
 Pager* pager_open(const char* filename);
 void db_close(Table *table);
 void pager_flush(Pager* pager, uint32_t page_num);
+NodeType get_node_type(void* node);
+void set_node_type(void *node, NodeType type);
 
 uint32_t* leaf_node_num_cells(void* node);
 void* leaf_node_cell(void* node, uint32_t cell_num);
