@@ -22,7 +22,10 @@ typedef struct {
     Row row_to_insert;
 } Statement;
 
+PrepareResult prepare_insert(char* buffer, Statement *statement);
 PrepareResult prepare_statement(char *buffer, Statement *statement);
+ExecuteResult execute_insert(Statement *statement, Table *table);
+ExecuteResult execute_select(Statement *statement, Table *table);
 ExecuteResult execute_statement(Statement *statement, Table *table);
 
 #endif

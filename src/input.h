@@ -23,6 +23,6 @@ void read_input(InputBuffer *input_buffer);
 void close_input_buffer(InputBuffer *input_buffer);
 MetaCommandResult do_meta_command(InputBuffer* input_buffer, Table* table);
 void print_constants();
-void print_leaf_node(void *node);
+void print_tree(Pager* pager, uint32_t page_num, uint32_t indentation_level);
 
 #endif
