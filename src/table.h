@@ -124,4 +124,6 @@ uint32_t get_node_max_key(void* node);
 void initialize_internal_node(void* node);
 uint32_t* leaf_node_next_leaf(void* node);
 
+Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
+
 #endif
