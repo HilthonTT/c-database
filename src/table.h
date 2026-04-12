@@ -59,6 +59,8 @@ extern const uint32_t INTERNAL_NODE_KEY_SIZE;
 extern const uint32_t INTERNAL_NODE_CHILD_SIZE;
 extern const uint32_t INTERNAL_NODE_CELL_SIZE;
 
+extern const uint32_t INTERNAL_NODE_MAX_CELLS;
+
 typedef enum {
     NODE_INTERNAL,
     NODE_LEAF,
@@ -125,5 +127,10 @@ void initialize_internal_node(void* node);
 uint32_t* leaf_node_next_leaf(void* node);
 
 Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key);
+
+uint32_t* node_parent(void* node);
+void update_internal_node_key(void* node, uint32_t old_key, uint32_t new_key);
+uint32_t internal_node_find_child(void* node, uint32_t key);
+void internal_node_insert(Table* table, uint32_t parent_page_num, uint32_t child_page_num);
 
 #endif
