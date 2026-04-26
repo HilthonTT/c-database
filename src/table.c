@@ -536,6 +536,9 @@ Cursor* internal_node_find(Table* table, uint32_t page_num, uint32_t key) {
             return leaf_node_find(table, child_num, key);
         case NODE_INTERNAL:
             return internal_node_find(table, child_num, key);
+        default:
+            printf("Unexpected node type\n");
+            exit(EXIT_FAILURE);
     }
 }
 

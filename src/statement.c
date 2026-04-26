@@ -6,7 +6,7 @@
 PrepareResult prepare_insert(char* buffer, Statement *statement) {
     statement->type = STATEMENT_INSERT;
 
-    char* keyword = strtok(buffer, " ");
+    strtok(buffer, " ");
     char* id_string = strtok(NULL, " ");
     char* username = strtok(NULL, " ");
     char* email = strtok(NULL, " ");
