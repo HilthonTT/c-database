@@ -42,9 +42,20 @@ describe 'database' do
     script << ".exit"
     result = run_script(script)
     expect(result.last(2)).to match_array([
-      "db > Executed.",
-      "db > Need to implement splitting internal node"
+      "db > Error: Table full.",
+      "db > ",
     ])
+  end
+
+  it "keeps rows written before the table filled up" do
+    script = (1..1401).map do |i|
+      "insert #{i} user#{i} person#{i}@example.com"
+    end
+    script << ".exit"
+    inserted = run_script(script).count { |line| line.end_with?("Executed.") }
+
+    result = run_script(["select", ".exit"])
+    expect(result.count { |line| line.include?("@example.com") }).to eq(inserted)
   end
 
   it "allows inserting strings that are the maximum length" do
@@ -471,5 +482,51 @@ describe 'database' do
       "db > ",
     ])
   end
-end
 
+  it 'rejects duplicate ids in a multi-level tree' do
+    script = (1..40).map { |i| "insert #{i} user#{i} person#{i}@example.com" }
+    script << "insert 5 user5 person5@example.com"
+    script << "insert 30 user30 person30@example.com"
+    script << ".exit"
+    result = run_script(script)
+
+    expect(result[40..41]).to eq([
+      "db > Error: Duplicate key.",
+      "db > Error: Duplicate key.",
+    ])
+  end
+
+  it 'returns rows in key order after random inserts' do
+    keys = (1..5000).to_a.sample(400, random: Random.new(7))
+    script = keys.map { |i| "insert #{i} user#{i} person#{i}@example.com" }
+    script << "select"
+    script << ".exit"
+    result = run_script(script)
+
+    ids = result.drop(keys.length).filter_map { |line| line[/\((\d+),/, 1]&.to_i }
+    expect(ids).to eq(keys.sort)
+  end
+
+  it 'rejects inserts with the wrong number of fields' do
+    result = run_script([
+      "insert 1 user1",
+      "insert 1 user1 person1@example.com extra",
+      ".exit",
+    ])
+    expect(result).to eq([
+      "db > Syntax error. Could not parse statement.",
+      "db > Syntax error. Could not parse statement.",
+      "db > ",
+    ])
+  end
+
+  it 'saves data when input ends without .exit' do
+    run_script(["insert 1 user1 person1@example.com"])
+    result = run_script(["select", ".exit"])
+    expect(result).to eq([
+      "db > (1, user1, person1@example.com)",
+      "Executed.",
+      "db > ",
+    ])
+  end
+end
