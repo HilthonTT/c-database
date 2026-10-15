@@ -1,33 +1,44 @@
-CC = gcc
-CFLAGS = -g -Wall -I./src
-RM = rm -f
+SRC_DIR   := src
+BUILD_DIR := build
+TARGET    := db
 
-SRC_DIR = src
-BUILD_DIR = build
+CC       ?= gcc
+CSTD     := -std=c11
+WARNINGS := -Wall -Wextra -Wpedantic -Wshadow -Wstrict-prototypes -Wmissing-prototypes
+CPPFLAGS := -I$(SRC_DIR) -D_POSIX_C_SOURCE=200809L -MMD -MP
+OPTFLAGS ?= -g -O0
+CFLAGS   := $(CSTD) $(WARNINGS) $(OPTFLAGS)
 
-SOURCES = $(wildcard $(SRC_DIR)/*.c)
-OBJECTS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SOURCES))
+SOURCES := $(shell find $(SRC_DIR) -name '*.c')
+HEADERS := $(shell find $(SRC_DIR) -name '*.h')
+OBJECTS := $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+DEPS    := $(OBJECTS:.o=.d)
 
-TARGET = db
+.PHONY: all release sanitize test format clean
 
 all: $(TARGET)
 
+release: clean
+	$(MAKE) OPTFLAGS="-O2 -DNDEBUG"
+
+sanitize: clean
+	$(MAKE) OPTFLAGS="-g -O1 -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer" \
+		LDFLAGS="-fsanitize=address,undefined"
+
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@
+	$(CC) $(LDFLAGS) $^ -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR):
-	mkdir -p $@
+test: $(TARGET)
+	bundle exec rspec
+
+format:
+	clang-format -i $(SOURCES) $(HEADERS)
 
 clean:
 	$(RM) -r $(BUILD_DIR) $(TARGET) *.db
 
-test:
-	bundle exec rspec
-
-format: *.c
-	clang-format -style=Google -i *.c
-
-.PHONY: all clean
+-include $(DEPS)
