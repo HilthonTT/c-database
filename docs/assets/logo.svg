@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="c-database icon">
+  <title>c-database</title>
+  <rect width="128" height="128" rx="24" fill="#0D1226"/>
+  <!-- Database cylinder in C blue, a C on its front -->
+  <path d="M24 34V94A40 12 0 0 0 104 94V34Z" fill="#283593"/>
+  <path d="M24 34V94A40 12 0 0 0 64 106V46A40 12 0 0 1 24 34Z" fill="#1F2A7A"/>
+  <ellipse cx="64" cy="34" rx="40" ry="12" fill="#A8B9CC"/>
+  <ellipse cx="64" cy="34" rx="30" ry="7" fill="#8A9CB3"/>
+  <path d="M75 63A14 14 0 1 0 75 85" stroke="#A8B9CC" stroke-width="7" stroke-linecap="round" fill="none"/>
+</svg>
